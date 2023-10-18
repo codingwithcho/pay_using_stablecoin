@@ -8,6 +8,6 @@ This is a tutorial series to demonstrate how to create a payment functionality i
 2. https://github.com/codingwithcho/pay_using_stablecoin
 
 3. You can get to me on if you have any questions
-    a. Youtube comment section
-    b. email: codingwithcho@gmail.com
-    c. X(twitter): https://twitter.com/codingwithcho
+    1. Youtube comment section
+    2. email: codingwithcho@gmail.com
+    3. X(twitter): https://twitter.com/codingwithcho
