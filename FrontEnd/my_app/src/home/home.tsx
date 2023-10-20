@@ -2,9 +2,11 @@ import userPic from '/user.svg'
 import handWave from '/hand.svg'
 import { useAuthentication } from '../web3'
 import { useEffect } from 'react'
+import { ethers } from 'ethers'
+import { Payment_Contract_ABI, Payment_Contract_Address, Token_Contract_ABI, Token_Contract_Address } from '../constants'
 
 export const Home = () => {
-    const {currentUserWallet, ensureLogin, disConnectWallet} = useAuthentication()
+    const {currentUserWallet, ensureLogin, disConnectWallet, getWeb3Signer} = useAuthentication()
 
     useEffect(() => {
         const checkForSignIn = async () => {
@@ -21,6 +23,26 @@ export const Home = () => {
 
     const onSignOut = async () => {
         await disConnectWallet()
+    }
+
+    const onPayWithStableCoin = async () => {
+        const signer = await getWeb3Signer()
+        const paymentSigner = new ethers.Contract(Payment_Contract_Address, Payment_Contract_ABI, signer)
+        const stableCoinSigner  = new ethers.Contract(Token_Contract_Address, Token_Contract_ABI, signer)
+
+        // we have to call the approve function so as to provide our users a means of approving our smart contract to spend x amoun from their wallet
+        // lets hard code a price of 5 token
+
+        // approve takes the contract address that will be the spender, the maximum amount to be spent
+        const approveTxn = await stableCoinSigner.approve(Payment_Contract_Address, ethers.utils.parseEther("5"))
+        await approveTxn.wait()
+
+        // write the contract to pay x amount of token
+        // don't forget to sent the token as allowed
+        const paymentTxn = await paymentSigner.depositPayment(Token_Contract_Address, import.meta.env.VITE_OWNER_WALLET, ethers.utils.parseEther("5"))
+        await paymentTxn.wait()
+
+        alert("Paid successfully")
     }
 
     return(
@@ -54,7 +76,7 @@ export const Home = () => {
                 </>)}
                 
                 <div>
-                    <button className='mb-5 px-3 border-2 border-solid rounded-full font-semibold bg-green-400 text-white hover:border-green-400 hover:text-green-400 hover:bg-transparent'>Pay with stable coin</button>
+                    <button onClick={onPayWithStableCoin} className='mb-5 px-3 border-2 border-solid rounded-full font-semibold bg-green-400 text-white hover:border-green-400 hover:text-green-400 hover:bg-transparent'>Pay with stable coin</button>
                 </div>
             </div>
         </div>
