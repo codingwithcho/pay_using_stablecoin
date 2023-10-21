@@ -31,3 +31,6 @@ const main = async () => {
     console.error(error);
     process.exitCode = 1;
   });
+
+  // npx hardhat run --network mumbai scripts/deploy.js
+  //contract address = 0xE6E75622a3C0050292B55728A97d847A1f08f47e
